@@ -40,7 +40,7 @@ injectGlobal`
   }
 
   input,
-  textarea {
+  [contenteditable] {
     border: none;
     background: transparent;
     font-family: VT323, monospace;

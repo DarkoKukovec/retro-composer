@@ -6,7 +6,7 @@ import { createAudio } from '../services/audio';
 
 const mainStyle = css`
   font-size: 20px;
-  padding: 4px;
+  padding: 8px 4px;
   display: flex;
   line-height: 24px;
 `;
@@ -23,8 +23,13 @@ export const Player: React.FC<{
   notes: Array<INoteRecord>;
   tempo: number;
   onTempoChange(value: number): void;
-}> = ({ notes, tempo, onTempoChange }) => {
-  const audio = React.useMemo(() => (notes.length ? createAudio(notes, tempo) : null), [notes, tempo]);
+  setActiveNote(index: number): void;
+}> = ({ notes, tempo, onTempoChange, setActiveNote }) => {
+  const audio = React.useMemo(() => (notes.length ? createAudio(notes, tempo, setActiveNote) : null), [
+    notes,
+    tempo,
+    setActiveNote,
+  ]);
 
   React.useEffect(() => {
     return () => {

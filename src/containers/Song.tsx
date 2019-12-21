@@ -5,6 +5,7 @@ import { parseNotes, serializeNotes } from '../services/inputParser';
 import { Player } from '../components/Player';
 import { ISong } from '../interfaces/ISong';
 import { useHistory } from 'react-router-dom';
+import { PRIMARY_TEXT_COLOR, PRIMARY_COLOR } from '../consts/colors';
 
 const mainStyle = css`
   height: 100%;
@@ -31,15 +32,26 @@ const nameStyle = css`
   text-align: center;
 `;
 
+const activeStyle = css`
+  background: ${PRIMARY_TEXT_COLOR};
+  outline: 1px solid ${PRIMARY_TEXT_COLOR};
+  color: ${PRIMARY_COLOR};
+`;
+
 export const Song: React.FC<{
   song: Partial<ISong>;
   onSave(song: Partial<ISong>, data: Partial<ISong>): string;
   history: { goBack(): void };
 }> = ({ song, onSave, history }) => {
+  const [notes, setNotes] = React.useState(serializeNotes(song.notes || []));
+  const [active, setActive] = React.useState(-1);
   const [parsed, setParsed] = React.useState(song.notes || []);
   const [name, setName] = React.useState(song.name || '');
   const [tempo, setTempo] = React.useState(song.tempo || 100);
-  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setParsed(parseNotes(e.target.value));
+  const onChange = (e: React.ChangeEvent<HTMLDivElement>) => {
+    setNotes(e.target.innerText);
+    setParsed(parseNotes(e.target.innerText));
+  };
   const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
   const onTempoChange = (value: number) => setTempo(value);
   const historyInstance = useHistory();
@@ -58,7 +70,18 @@ export const Song: React.FC<{
   const onBackClick = () => {
     history.goBack();
   };
-  const defaultValue = serializeNotes(song.notes || []);
+
+  const setActiveNote = React.useCallback(
+    (index: number) => {
+      setActive(index);
+    },
+    [setActive],
+  );
+
+  const notesHtml = notes
+    .split(/\s+/g)
+    .map((note, index) => `<span class="${index === active ? activeStyle : ''}">${note}</span>`)
+    .join(' ');
 
   return (
     <div className={mainStyle}>
@@ -71,8 +94,8 @@ export const Song: React.FC<{
           Save
         </button>
       </div>
-      <textarea className={inputStyle} defaultValue={defaultValue} onChange={onChange}></textarea>
-      <Player notes={parsed} onTempoChange={onTempoChange} tempo={tempo} />
+      <div contentEditable className={inputStyle} onInput={onChange} dangerouslySetInnerHTML={{ __html: notesHtml }} />
+      <Player notes={parsed} onTempoChange={onTempoChange} tempo={tempo} setActiveNote={setActiveNote} />
     </div>
   );
 };

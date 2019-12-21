@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
 import { css } from 'emotion';
 import * as React from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { HashRouter, Route } from 'react-router-dom';
 import { v1 as uuidv1 } from 'uuid';
 
 import { Footer } from '../components/Footer';
@@ -50,7 +50,7 @@ export const App = () => {
     <div className={layoutStyle}>
       <Header />
       <main className={mainStyle}>
-        <BrowserRouter>
+        <HashRouter>
           <Route path="/" exact render={() => <SongList songs={songs} />} />
           <Route
             path="/:id"
@@ -59,7 +59,7 @@ export const App = () => {
               return <Song {...props} song={song} onSave={onSaveClick} />;
             }}
           />
-        </BrowserRouter>
+        </HashRouter>
       </main>
       <Footer />
     </div>
