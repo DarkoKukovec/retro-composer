@@ -3,7 +3,7 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 
 import { App } from './containers/App';
-import { SECONDARY_TEXT_COLOR, SECONDARY_COLOR } from './consts/colors';
+import { SECONDARY_TEXT_COLOR, SECONDARY_COLOR, PRIMARY_TEXT_COLOR, PRIMARY_COLOR } from './consts/colors';
 
 import * as serviceWorker from './serviceWorker';
 
@@ -20,6 +20,32 @@ injectGlobal`
     font-size: 12px;
     font-weight: 400;
     color: ${SECONDARY_TEXT_COLOR};
+  }
+
+  button {
+    appearence: none;
+    border: 1px solid ${PRIMARY_TEXT_COLOR};
+    background: transparent;
+    font-family: VT323, monospace;
+    font-size: 20px;
+    margin: 0 4px;
+    outline: none;
+    color: ${PRIMARY_TEXT_COLOR};
+    cursor: pointer;
+  
+    &:hover {
+      background: ${PRIMARY_TEXT_COLOR};
+      color: ${PRIMARY_COLOR};
+    }
+  }
+
+  input,
+  textarea {
+    border: none;
+    background: transparent;
+    font-family: VT323, monospace;
+    font-size: 20px;
+    color: ${PRIMARY_TEXT_COLOR};
   }
 `;
 

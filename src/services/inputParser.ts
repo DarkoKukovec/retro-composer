@@ -23,3 +23,15 @@ export function parseNotes(notes: string): Array<INoteRecord> {
           },
     );
 }
+
+export function serializeNotes(notes: Array<INoteRecord>): string {
+  return notes
+    .map((note) =>
+      'tone' in note
+        ? `${note.duration}${note.extendedLength ? '.' : ''}${note.sharp ? '#' : ''}${note.tone.replace('#', '')}${
+            note.octave
+          }`
+        : `${note.duration}${note.extendedLength ? '.' : ''}-`,
+    )
+    .join(' ');
+}
