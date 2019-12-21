@@ -13,7 +13,7 @@ export function parseNotes(notes: string): Array<INoteRecord> {
             duration: parseInt(duration, 10),
             extendedLength: Boolean(extendedLength),
             sharp: Boolean(sharp),
-            tone: `${tone}${sharp || ''}` as Tone,
+            tone: tone as Tone,
             octave: parseInt(octave, 10),
           }
         : {
@@ -28,9 +28,7 @@ export function serializeNotes(notes: Array<INoteRecord>): string {
   return notes
     .map((note) =>
       'tone' in note
-        ? `${note.duration}${note.extendedLength ? '.' : ''}${note.sharp ? '#' : ''}${note.tone.replace('#', '')}${
-            note.octave
-          }`
+        ? `${note.duration}${note.extendedLength ? '.' : ''}${note.sharp ? '#' : ''}${note.tone}${note.octave}`
         : `${note.duration}${note.extendedLength ? '.' : ''}-`,
     )
     .join(' ');

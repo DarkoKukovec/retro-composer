@@ -12,6 +12,7 @@ import { PRESETS } from '../consts/presets';
 import { parseNotes } from '../services/inputParser';
 import { ISong } from '../interfaces/ISong';
 import { SongList } from './SongList';
+import { Tone } from '../enums/Tone';
 
 const layoutStyle = css`
   display: flex;
@@ -28,7 +29,9 @@ const mainStyle = css`
 `;
 
 const saved: Array<ISong> | null = JSON.parse(localStorage.getItem('saved-songs') || 'null');
-const presets = saved || PRESETS.map((preset) => ({ ...preset, notes: parseNotes(preset.notes) }));
+const presets = saved
+  ? saved.map((s) => ({ ...s, notes: s.notes.map((n) => ('tone' in n ? { ...n, tone: n.tone[0] as Tone } : n)) }))
+  : PRESETS.map((preset) => ({ ...preset, notes: parseNotes(preset.notes) }));
 
 export const App = () => {
   const [songs, setSongs] = React.useState(presets);

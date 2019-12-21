@@ -1,7 +1,9 @@
+/* eslint-disable react/jsx-no-bind */
 import { css } from 'emotion';
 import * as React from 'react';
 
 import { parseNotes, serializeNotes } from '../services/inputParser';
+import { Keyboard } from '../components/Keyboard';
 import { Player } from '../components/Player';
 import { ISong } from '../interfaces/ISong';
 import { useHistory } from 'react-router-dom';
@@ -36,6 +38,12 @@ const activeStyle = css`
   background: ${PRIMARY_TEXT_COLOR};
   outline: 1px solid ${PRIMARY_TEXT_COLOR};
   color: ${PRIMARY_COLOR};
+  display: inline-block;
+  height: 1em;
+
+  &:empty {
+    margin-bottom: -4px;
+  }
 `;
 
 export const Song: React.FC<{
@@ -48,9 +56,9 @@ export const Song: React.FC<{
   const [parsed, setParsed] = React.useState(song.notes || []);
   const [name, setName] = React.useState(song.name || '');
   const [tempo, setTempo] = React.useState(song.tempo || 100);
-  const onChange = (e: React.ChangeEvent<HTMLDivElement>) => {
-    setNotes(e.target.innerText);
-    setParsed(parseNotes(e.target.innerText));
+  const onNotesChange = (rawNotes: string) => {
+    setNotes(rawNotes);
+    setParsed(parseNotes(rawNotes));
   };
   const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
   const onTempoChange = (value: number) => setTempo(value);
@@ -78,10 +86,14 @@ export const Song: React.FC<{
     [setActive],
   );
 
-  const notesHtml = notes
+  let notesHtml = notes
     .split(/\s+/g)
     .map((note, index) => `<span class="${index === active ? activeStyle : ''}">${note}</span>`)
     .join(' ');
+
+  notesHtml = `<span class="${active === -1 ? activeStyle : ''}"></span>${notesHtml}<span class="${
+    active === parsed.length ? activeStyle : ''
+  }"></span>`;
 
   return (
     <div className={mainStyle}>
@@ -94,8 +106,14 @@ export const Song: React.FC<{
           Save
         </button>
       </div>
-      <div contentEditable className={inputStyle} onInput={onChange} dangerouslySetInnerHTML={{ __html: notesHtml }} />
+      <div
+        contentEditable
+        className={inputStyle}
+        onInput={(e: React.ChangeEvent<HTMLDivElement>) => onNotesChange(e.target.innerText)}
+        dangerouslySetInnerHTML={{ __html: notesHtml }}
+      />
       <Player notes={parsed} onTempoChange={onTempoChange} tempo={tempo} setActiveNote={setActiveNote} />
+      <Keyboard activeIndex={active} setActiveNote={setActiveNote} notes={parsed} onNotesChange={onNotesChange} />
     </div>
   );
 };

@@ -16,7 +16,7 @@ export function createAudio(notes: Array<INoteRecord>, tempo: number, setActiveN
   notes.forEach((note, index) => {
     const duration = Tone.Time(`${note.duration}n`);
     if ('tone' in note) {
-      const tone = `${note.tone.toUpperCase()}${2 + note.octave}`;
+      const tone = `${note.tone.toUpperCase()}${note.sharp ? '#' : ''}${2 + note.octave}`;
       parts.push([nextTone, [tone, duration, index]]);
     } else {
       parts.push([nextTone, ['', duration, index]]);
