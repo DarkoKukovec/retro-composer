@@ -23,7 +23,7 @@
     "typescript": "^3.7.3",
     "uuid": "^3.3.3"
   },
-  "homepage": "https://darkokukovec.github.io/retro-composer",
+  "homepage": "https://retro.kuk.is",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

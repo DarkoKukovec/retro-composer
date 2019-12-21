@@ -18,6 +18,7 @@ const linkStyle = css`
   padding: 6px;
   text-decoration: none;
   display: block;
+  color: ${PRIMARY_TEXT_COLOR};
 
   &:hover {
     background: ${PRIMARY_TEXT_COLOR};

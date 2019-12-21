@@ -22,10 +22,13 @@ const inputStyle = css`
 const toolbarStyle = css`
   display: flex;
   padding: 8px 4px 0;
+  line-height: 24px;
 `;
 
 const nameStyle = css`
   flex: 1;
+  font-size: 24px;
+  text-align: center;
 `;
 
 export const Song: React.FC<{
@@ -38,7 +41,7 @@ export const Song: React.FC<{
   const [tempo, setTempo] = React.useState(song.tempo || 100);
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setParsed(parseNotes(e.target.value));
   const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
-  const onTempoChange = (e: React.ChangeEvent<HTMLInputElement>) => setTempo(parseInt(e.target.value, 10) || 100);
+  const onTempoChange = (value: number) => setTempo(value);
   const historyInstance = useHistory();
   const onSaveClick = () => {
     const id = onSave(song, {
@@ -64,13 +67,12 @@ export const Song: React.FC<{
           Back
         </button>
         <input className={nameStyle} value={name} onChange={onNameChange} placeholder="Song name" />
-        Tempo: <input type="number" value={tempo} onChange={onTempoChange} />
         <button type="button" onClick={onSaveClick}>
           Save
         </button>
       </div>
       <textarea className={inputStyle} defaultValue={defaultValue} onChange={onChange}></textarea>
-      <Player notes={parsed} tempo={tempo} />
+      <Player notes={parsed} onTempoChange={onTempoChange} tempo={tempo} />
     </div>
   );
 };

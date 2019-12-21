@@ -7,12 +7,23 @@ import { createAudio } from '../services/audio';
 const mainStyle = css`
   font-size: 20px;
   padding: 4px;
+  display: flex;
+  line-height: 24px;
+`;
+
+const separatorStyle = css`
+  flex: 1;
+`;
+
+const tempoInputStyle = css`
+  width: 50px;
 `;
 
 export const Player: React.FC<{
   notes: Array<INoteRecord>;
   tempo: number;
-}> = ({ notes, tempo }) => {
+  onTempoChange(value: number): void;
+}> = ({ notes, tempo, onTempoChange }) => {
   const audio = React.useMemo(() => (notes.length ? createAudio(notes, tempo) : null), [notes, tempo]);
 
   React.useEffect(() => {
@@ -36,6 +47,11 @@ export const Player: React.FC<{
     }
   };
 
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTempo = parseInt(e.target.value, 10) || 100;
+    onTempoChange(newTempo);
+  };
+
   return (
     <div className={mainStyle}>
       <button type="button" onClick={onPlay}>
@@ -44,6 +60,9 @@ export const Player: React.FC<{
       <button type="button" onClick={onStop}>
         Stop
       </button>
+      <div className={separatorStyle} />
+      Tempo:
+      <input className={tempoInputStyle} type="number" value={tempo} onChange={onChange} />
     </div>
   );
 };
