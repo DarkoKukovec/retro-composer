@@ -1,0 +1,5 @@
+- [ ] Song creation / overview
+- [ ] Desktop input UI
+- [ ] Song player
+- [ ] Mobile input UI
+- [ ] Download song
