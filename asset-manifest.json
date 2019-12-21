@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.js": "/retro-composer/static/js/main.1002faf8.chunk.js",
-    "main.js.map": "/retro-composer/static/js/main.1002faf8.chunk.js.map",
-    "runtime-main.js": "/retro-composer/static/js/runtime-main.285e1053.js",
-    "runtime-main.js.map": "/retro-composer/static/js/runtime-main.285e1053.js.map",
-    "static/js/2.b3dbd1a4.chunk.js": "/retro-composer/static/js/2.b3dbd1a4.chunk.js",
-    "static/js/2.b3dbd1a4.chunk.js.map": "/retro-composer/static/js/2.b3dbd1a4.chunk.js.map",
-    "index.html": "/retro-composer/index.html",
-    "precache-manifest.58434e54f8a8b6900862c744a78c815b.js": "/retro-composer/precache-manifest.58434e54f8a8b6900862c744a78c815b.js",
-    "service-worker.js": "/retro-composer/service-worker.js",
-    "static/js/2.b3dbd1a4.chunk.js.LICENSE": "/retro-composer/static/js/2.b3dbd1a4.chunk.js.LICENSE",
-    "static/media/logo.svg": "/retro-composer/static/media/logo.0a217aa9.svg"
+    "main.js": "/static/js/main.55392ebf.chunk.js",
+    "main.js.map": "/static/js/main.55392ebf.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.948794b8.js",
+    "runtime-main.js.map": "/static/js/runtime-main.948794b8.js.map",
+    "static/js/2.b3dbd1a4.chunk.js": "/static/js/2.b3dbd1a4.chunk.js",
+    "static/js/2.b3dbd1a4.chunk.js.map": "/static/js/2.b3dbd1a4.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.031021fbff498c6e42796bfef3c1cb57.js": "/precache-manifest.031021fbff498c6e42796bfef3c1cb57.js",
+    "service-worker.js": "/service-worker.js",
+    "static/js/2.b3dbd1a4.chunk.js.LICENSE": "/static/js/2.b3dbd1a4.chunk.js.LICENSE",
+    "static/media/logo.svg": "/static/media/logo.0a217aa9.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.285e1053.js",
+    "static/js/runtime-main.948794b8.js",
     "static/js/2.b3dbd1a4.chunk.js",
-    "static/js/main.1002faf8.chunk.js"
+    "static/js/main.55392ebf.chunk.js"
   ]
 }
