@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b79193194a28d2c00a2517ce6743a410",
+    "revision": "79b68018d73bf24027c1680ac0842377",
     "url": "/retro-composer/index.html"
   },
   {
-    "revision": "34594df892d867cc6e76",
-    "url": "/retro-composer/static/js/2.f56629bd.chunk.js"
+    "revision": "b962c351ebd7015447b6",
+    "url": "/retro-composer/static/js/2.b3dbd1a4.chunk.js"
   },
   {
-    "revision": "0890ed1e400c6e2fe93bd99f0d43f2a4",
-    "url": "/retro-composer/static/js/2.f56629bd.chunk.js.LICENSE"
+    "revision": "53a0083f9f287484eb2966465285f2e3",
+    "url": "/retro-composer/static/js/2.b3dbd1a4.chunk.js.LICENSE"
   },
   {
-    "revision": "d5460b675b9c881db4f5",
-    "url": "/retro-composer/static/js/main.5dcd7ae4.chunk.js"
+    "revision": "ee0a234695746d463719",
+    "url": "/retro-composer/static/js/main.1002faf8.chunk.js"
   },
   {
     "revision": "6f19b5b8a89583ba77d3",
