@@ -121,6 +121,9 @@ export const Keyboard: React.FC<{
     }, 100) as unknown) as number;
   }
   const onKeyPress = (key: Key, long: boolean) => {
+    if (navigator && navigator.vibrate) {
+      navigator.vibrate(50);
+    }
     if (key === Key.Star && long) {
       presses =
         prompt()

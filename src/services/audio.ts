@@ -1,5 +1,6 @@
 import { NoteLength } from '../enums/NoteLength';
 import { INoteRecord } from '../interfaces/INoteRecord';
+import { saveAs } from 'file-saver';
 
 const Tone = require('tone');
 
@@ -74,14 +75,33 @@ export function downloadAudio(
   name?: string,
   onNoteChange?: (index: number) => void,
 ) {
+  if (!('MediaRecorder' in window)) {
+    if (navigator.vendor === 'Apple Computer, Inc.') {
+      if (navigator.platform === 'MacIntel') {
+        alert(
+          '[Safari Experimental] To download, enable the "Develop" menu in Safari Advanced settings and then enable the "MediaRecorder" option in Develop > Experimental Features menu',
+        );
+      } else {
+        alert(
+          '[Safari Experimental] To download, enable the "MediaRecorder" option in Safari settings: Advanced > Experimental Features menu',
+        );
+      }
+    } else {
+      alert('The MediaRecorder feature is not supported in this browser :(');
+    }
+    return;
+  }
   const context = Tone.context;
   const dest = context.createMediaStreamDestination();
   // @ts-ignore
   const mediaRecorder = new MediaRecorder(dest.stream);
-  // @ts-ignore
-  const type = types.find((item) => MediaRecorder.isTypeSupported(item.mime));
+  const type = types.find(
+    // @ts-ignore
+    (item) => (MediaRecorder && MediaRecorder.isTypeSupported ? MediaRecorder.isTypeSupported(item.mime) : true),
+  );
 
   if (!type) {
+    alert('No known file type support');
     return;
   }
 
@@ -89,7 +109,6 @@ export function downloadAudio(
     [...notes, { duration: NoteLength.Eighth, extendedLength: false, rest: false }],
     tempo,
     (index: number) => {
-      console.log('note', index);
       if (onNoteChange) {
         onNoteChange(index);
       }
@@ -98,7 +117,6 @@ export function downloadAudio(
       }
     },
     () => {
-      console.log('stop');
       Tone.Transport.stop();
       mediaRecorder.stop();
     },
@@ -109,27 +127,14 @@ export function downloadAudio(
   const chunks: Array<any> = [];
 
   mediaRecorder.onstop = () => {
-    // Make blob out of our blobs, and open it.
     var blob = new Blob(chunks, { type: type.mime });
-    const url = URL.createObjectURL(blob);
-    console.log('onstop', url);
-    // window.location.href = url;
-    // window.open(url);
-    const a = document.createElement('a');
-    a.href = url;
-    a.setAttribute('download', `${name || 'ringtone'}.${type.ext}`);
-    document.body.appendChild(a);
-    a.click();
+    saveAs(blob, `${name || 'ringtone'}.${type.ext}`);
   };
 
   mediaRecorder.ondataavailable = (evt: any) => {
-    // push each chunk (blobs) in an array
-    console.log('on chunk');
     chunks.push(evt.data);
   };
 
-  console.log('start', mediaRecorder, dest.stream);
-  // mediaRecorder.start();
   Tone.Transport.start();
   audio.start();
 }

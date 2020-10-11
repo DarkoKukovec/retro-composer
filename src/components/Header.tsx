@@ -1,7 +1,7 @@
 import { css } from 'emotion';
 import * as React from 'react';
 
-import logo from '../assets/logo.svg';
+import { ReactComponent as Logo } from '../assets/logo.svg';
 
 const headerStyle = css`
   height: 32px;
@@ -16,6 +16,6 @@ const logoStyle = css`
 
 export const Header = () => (
   <header className={headerStyle}>
-    <img className={logoStyle} src={logo} alt="Retro Composer" />
+    <Logo className={logoStyle} />
   </header>
 );

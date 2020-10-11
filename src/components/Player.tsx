@@ -73,11 +73,9 @@ export const Player: React.FC<{
       <button type="button" onClick={onStop}>
         Stop
       </button>
-      {'MediaRecorder' in window && (
-        <button type="button" onClick={onDownload}>
-          Download
-        </button>
-      )}
+      <button type="button" onClick={onDownload}>
+        Download
+      </button>
       <div className={separatorStyle} />
       Tempo:
       <input className={tempoInputStyle} type="number" value={tempo} onChange={onChange} />
