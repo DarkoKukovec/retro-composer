@@ -4,6 +4,8 @@ import * as React from 'react';
 import { INoteRecord } from '../interfaces/INoteRecord';
 import { createAudio, downloadAudio } from '../services/audio';
 
+const ToneLib = require('tone');
+
 const mainStyle = css`
   font-size: 20px;
   padding: 8px 4px;
@@ -42,6 +44,7 @@ export const Player: React.FC<{
 
   const onPlay = () => {
     if (audio) {
+      ToneLib.start();
       audio.stop();
       audio.start();
     }
