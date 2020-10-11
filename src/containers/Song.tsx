@@ -112,7 +112,7 @@ export const Song: React.FC<{
         onInput={(e: React.ChangeEvent<HTMLDivElement>) => onNotesChange(e.target.innerText)}
         dangerouslySetInnerHTML={{ __html: notesHtml }}
       />
-      <Player notes={parsed} onTempoChange={onTempoChange} tempo={tempo} setActiveNote={setActiveNote} />
+      <Player notes={parsed} onTempoChange={onTempoChange} tempo={tempo} name={name} setActiveNote={setActiveNote} />
       <Keyboard activeIndex={active} setActiveNote={setActiveNote} notes={parsed} onNotesChange={onNotesChange} />
     </div>
   );

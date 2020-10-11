@@ -12,7 +12,7 @@ const TONES = { 1: 'c', 2: 'd', 3: 'e', 4: 'f', 5: 'g', 6: 'a', 7: 'b' };
 
 const mainStyle = css`
   width: 100%;
-  height: 200px;
+  height: 230px;
   background: ${SECONDARY_COLOR};
   z-index: 1;
   display: grid;
@@ -126,7 +126,6 @@ export const Keyboard: React.FC<{
         prompt()
           ?.split(' ')
           .map((k: string) => ((KEYS as any)[k] as Key) || (parseInt(k, 10) as Key)) || [];
-      console.log(presses);
       onKeyPress(presses.shift() as Key, false);
       return;
     }
@@ -188,12 +187,11 @@ export const Keyboard: React.FC<{
       }
     } else {
       const newNote: Partial<INoteRecord> = {
-        duration: DEFAULT_DURATION, // activeNote ? activeNote.duration : DEFAULT_DURATION,
+        duration: DEFAULT_DURATION,
       };
       if (key === Key.Zero) {
         Object.assign(newNote, { rest: true });
       } else {
-        console.log(key, TONES[key]);
         Object.assign(newNote, {
           extendedLength: long,
           octave: activeNote && 'octave' in activeNote ? activeNote.octave : DEFAULT_OCTAVE,
@@ -212,19 +210,18 @@ export const Keyboard: React.FC<{
         setActiveNote(activeIndex + 1);
       }
     }
-    console.log(key, long);
   };
 
   return (
     <div className={mainStyle}>
       <Button keyVal={Key.Left} onPress={onKeyPress}>
-        &lt;-
+        ←
       </Button>
       <Button keyVal={Key.C} onPress={onKeyPress}>
         C
       </Button>
       <Button keyVal={Key.Right} onPress={onKeyPress}>
-        -&gt;
+        →
       </Button>
       <Button keyVal={Key.One} onPress={onKeyPress}>
         1
