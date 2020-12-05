@@ -38,7 +38,7 @@ const activeStyle = css`
   background: ${PRIMARY_TEXT_COLOR};
   outline: 1px solid ${PRIMARY_TEXT_COLOR};
   color: ${PRIMARY_COLOR};
-  display: inline-block;
+  /* display: inline-block; */
   height: 1em;
 
   &:empty {
@@ -52,14 +52,41 @@ export const Song: React.FC<{
   history: { goBack(): void };
 }> = ({ song, onSave, history }) => {
   const [notes, setNotes] = React.useState(serializeNotes(song.notes || []));
+  const selection = React.useRef<Selection | null>();
+  const selectionOffset = React.useRef<number>(0);
+  const input = React.useRef<HTMLDivElement | null>();
   const [active, setActive] = React.useState(-1);
   const [parsed, setParsed] = React.useState(song.notes || []);
   const [name, setName] = React.useState(song.name || '');
   const [tempo, setTempo] = React.useState(song.tempo || 100);
   const onNotesChange = (rawNotes: string) => {
+    selection.current = window.getSelection();
+    selectionOffset.current = selection.current?.focusOffset || 0;
     setNotes(rawNotes);
     setParsed(parseNotes(rawNotes));
+    window.requestAnimationFrame(() => {
+      if (input.current && selection.current) {
+        const range = document.createRange();
+        range.setStart(input.current, Math.min(selectionOffset.current, input.current.childNodes.length));
+        range.collapse(true);
+        selection.current.removeAllRanges();
+        selection.current.addRange(range);
+        // ((input.current as unknown) as HTMLInputElement).setSelectionRange(
+        //   selection.current.focusOffset,
+        //   selection.current.focusOffset,
+        // );
+      }
+    });
   };
+  const timer = React.useRef<NodeJS.Timeout>();
+  const onNoteInput = React.useCallback((rawNotes: string) => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
+    timer.current = setTimeout(() => {
+      onNotesChange(rawNotes);
+    }, 500);
+  }, []);
   const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
   const onTempoChange = (value: number) => setTempo(value);
   const historyInstance = useHistory();
@@ -107,9 +134,10 @@ export const Song: React.FC<{
         </button>
       </div>
       <div
+        ref={input as any}
         contentEditable
         className={inputStyle}
-        onInput={(e: React.ChangeEvent<HTMLDivElement>) => onNotesChange(e.target.innerText)}
+        onInput={(e: React.ChangeEvent<HTMLDivElement>) => onNoteInput(e.target.innerText)}
         dangerouslySetInnerHTML={{ __html: notesHtml }}
       />
       <Player notes={parsed} onTempoChange={onTempoChange} tempo={tempo} name={name} setActiveNote={setActiveNote} />

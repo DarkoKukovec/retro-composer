@@ -44,7 +44,9 @@ export const Player: React.FC<{
 
   const onPlay = () => {
     if (audio) {
-      ToneLib.start();
+      try {
+        ToneLib.start();
+      } catch {}
       audio.stop();
       audio.start();
     }

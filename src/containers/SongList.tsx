@@ -40,8 +40,16 @@ export const SongList: React.FC<{
       ))}
       <li>
         <Link className={linkStyle} to="/new">
-          New song
+          + New song
         </Link>
+        <a
+          className={linkStyle}
+          href="https://nokia.nigelcoldwell.co.uk/tunes.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          + Need ideas?
+        </a>
       </li>
     </ul>
   );
