@@ -1,4 +1,6 @@
-This project was bootstrapped with [Infinum CRA starter](https://github.com/infinum/js-cra-starter).
+Retro composer is a single-page React app for composing chiptune songs on a keyboard. It is built with Vite, React 19, React Router 7, Tailwind CSS 4 and [Tone.js](https://tonejs.github.io/).
+
+Requires Node.js >= 24.
 
 ## Available Scripts
 
@@ -6,33 +8,36 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+Runs the app in development mode on [http://localhost:5173](http://localhost:5173).
+The page reloads when you make edits.
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Runs the test suite once with [Vitest](https://vitest.dev/) and exits.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Type-checks the project and builds it for production to the `dist` folder.
+The build is minified and the asset filenames include content hashes.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+### `npm run preview`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Serves the production build in `dist` on [http://localhost:4173](http://localhost:4173).
 
-### `npm run eject`
+### `npm run lint`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Checks formatting with Prettier and runs ESLint.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### `npm run deploy`
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Builds the app and publishes `dist` to GitHub Pages (via `gh-pages`). The site is served at https://retro.kuk.is; the `CNAME` file in `public` maps the custom domain.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Project structure
+
+- `index.html` — Vite entry, loaded by the dev server and the build.
+- `public/` — static assets (icons, `manifest.json`, `CNAME`, `robots.txt`) copied to the build output as-is.
+- `src/` — application source; `src/main` entry is `src/index.tsx`.
+- `vite.config.ts` — Vite configuration (React + Tailwind plugins).
+- `vitest.config.ts` — Vitest configuration; tests live next to the components in `*.test.tsx` files with setup in `src/test/setup.ts`.
+- `tsconfig.json` — project references for `tsconfig.app.json` (source) and `tsconfig.node.json` (config files).
+- `eslint.config.js` — flat ESLint configuration.
