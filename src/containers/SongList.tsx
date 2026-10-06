@@ -1,36 +1,12 @@
-/* eslint-disable react/jsx-no-bind */
-import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import { ISong } from '../interfaces/ISong';
-import { css } from 'emotion';
-import { PRIMARY_TEXT_COLOR, PRIMARY_COLOR } from '../consts/colors';
-
-const listStyle = css`
-  margin: 0;
-  padding: 4px;
-  list-style: none;
-`;
-
-const linkStyle = css`
-  font-size: 24px;
-  cursor: pointer;
-  padding: 6px;
-  text-decoration: none;
-  display: block;
-  color: ${PRIMARY_TEXT_COLOR};
-
-  &:hover {
-    background: ${PRIMARY_TEXT_COLOR};
-    color: ${PRIMARY_COLOR};
-  }
-`;
-
 export const SongList: React.FC<{
-  songs: Array<ISong>;
+  songs: Array<{ id: string; name: string }>;
 }> = ({ songs }) => {
+  const linkStyle =
+    'block cursor-pointer p-1.5 text-2xl no-underline text-[#242d23] hover:bg-[#242d23] hover:text-[#79a682]';
   return (
-    <ul className={listStyle}>
+    <ul className="m-0 p-1 list-none">
       {songs.map((song) => (
         <li key={song.name}>
           <Link className={linkStyle} to={`/${song.id}`}>

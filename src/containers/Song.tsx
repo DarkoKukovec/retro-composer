@@ -1,60 +1,21 @@
-/* eslint-disable react/jsx-no-bind */
-import { css } from 'emotion';
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { parseNotes, serializeNotes } from '../services/inputParser';
 import { Keyboard } from '../components/Keyboard';
 import { Player } from '../components/Player';
 import { ISong } from '../interfaces/ISong';
-import { useHistory } from 'react-router-dom';
-import { PRIMARY_TEXT_COLOR, PRIMARY_COLOR } from '../consts/colors';
+import { parseNotes, serializeNotes } from '../services/inputParser';
 
-const mainStyle = css`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-`;
-
-const inputStyle = css`
-  width: calc(100% - 32px);
-  font-size: 24px;
-  padding: 16px;
-  flex: 1;
-`;
-
-const toolbarStyle = css`
-  display: flex;
-  padding: 8px 4px 0;
-  line-height: 24px;
-`;
-
-const nameStyle = css`
-  flex: 1;
-  font-size: 24px;
-  text-align: center;
-`;
-
-const activeStyle = css`
-  background: ${PRIMARY_TEXT_COLOR};
-  outline: 1px solid ${PRIMARY_TEXT_COLOR};
-  color: ${PRIMARY_COLOR};
-  /* display: inline-block; */
-  height: 1em;
-
-  &:empty {
-    margin-bottom: -4px;
-  }
-`;
+const activeStyle = 'h-[1em] bg-[#242d23] text-[#79a682] outline outline-1 outline-[#242d23] empty:-mb-1';
 
 export const Song: React.FC<{
   song: Partial<ISong>;
   onSave(song: Partial<ISong>, data: Partial<ISong>): string;
-  history: { goBack(): void };
-}> = ({ song, onSave, history }) => {
+}> = ({ song, onSave }) => {
   const [notes, setNotes] = React.useState(serializeNotes(song.notes || []));
-  const selection = React.useRef<Selection | null>();
+  const selection = React.useRef<Selection | null>(null);
   const selectionOffset = React.useRef<number>(0);
-  const input = React.useRef<HTMLDivElement | null>();
+  const input = React.useRef<HTMLDivElement | null>(null);
   const [active, setActive] = React.useState(-1);
   const [parsed, setParsed] = React.useState(song.notes || []);
   const [name, setName] = React.useState(song.name || '');
@@ -68,28 +29,20 @@ export const Song: React.FC<{
       if (input.current && selection.current) {
         const range = document.createRange();
         range.setStart(input.current, Math.min(selectionOffset.current, input.current.childNodes.length));
-        range.collapse(true);
         selection.current.removeAllRanges();
         selection.current.addRange(range);
-        // ((input.current as unknown) as HTMLInputElement).setSelectionRange(
-        //   selection.current.focusOffset,
-        //   selection.current.focusOffset,
-        // );
       }
     });
   };
-  const timer = React.useRef<NodeJS.Timeout>();
+  const timer = React.useRef<number | undefined>(undefined);
   const onNoteInput = React.useCallback((rawNotes: string) => {
-    if (timer.current) {
-      clearTimeout(timer.current);
-    }
+    clearTimeout(timer.current);
     timer.current = setTimeout(() => {
       onNotesChange(rawNotes);
     }, 500);
   }, []);
   const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
-  const onTempoChange = (value: number) => setTempo(value);
-  const historyInstance = useHistory();
+  const navigate = useNavigate();
   const onSaveClick = () => {
     const id = onSave(song, {
       name,
@@ -98,12 +51,12 @@ export const Song: React.FC<{
     });
 
     if (id !== song.id) {
-      historyInstance.replace(`/${id}`);
+      navigate(`/${id}`);
     }
   };
 
   const onBackClick = () => {
-    history.goBack();
+    navigate(-1);
   };
 
   const setActiveNote = React.useCallback(
@@ -123,24 +76,24 @@ export const Song: React.FC<{
   }"></span>`;
 
   return (
-    <div className={mainStyle}>
-      <div className={toolbarStyle}>
+    <div className="flex h-full flex-col">
+      <div className="flex px-1 pt-2 leading-6">
         <button type="button" onClick={onBackClick}>
           Back
         </button>
-        <input className={nameStyle} value={name} onChange={onNameChange} placeholder="Song name" />
+        <input className="flex-1 text-center text-2xl" value={name} onChange={onNameChange} placeholder="Song name" />
         <button type="button" onClick={onSaveClick}>
           Save
         </button>
       </div>
       <div
-        ref={input as any}
+        ref={input}
         contentEditable
-        className={inputStyle}
-        onInput={(e: React.ChangeEvent<HTMLDivElement>) => onNoteInput(e.target.innerText)}
+        className="flex-1 p-4 text-2xl"
+        onInput={(e: React.FormEvent<HTMLDivElement>) => onNoteInput(e.currentTarget.innerText)}
         dangerouslySetInnerHTML={{ __html: notesHtml }}
       />
-      <Player notes={parsed} onTempoChange={onTempoChange} tempo={tempo} name={name} setActiveNote={setActiveNote} />
+      <Player notes={parsed} onTempoChange={setTempo} tempo={tempo} name={name} setActiveNote={setActiveNote} />
       <Keyboard activeIndex={active} setActiveNote={setActiveNote} notes={parsed} onNotesChange={onNotesChange} />
     </div>
   );

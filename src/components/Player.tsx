@@ -1,25 +1,8 @@
-import { css } from 'emotion';
 import * as React from 'react';
+import { start } from 'tone';
 
 import { INoteRecord } from '../interfaces/INoteRecord';
 import { createAudio, downloadAudio } from '../services/audio';
-
-const ToneLib = require('tone');
-
-const mainStyle = css`
-  font-size: 20px;
-  padding: 8px 4px;
-  display: flex;
-  line-height: 24px;
-`;
-
-const separatorStyle = css`
-  flex: 1;
-`;
-
-const tempoInputStyle = css`
-  width: 50px;
-`;
 
 export const Player: React.FC<{
   notes: Array<INoteRecord>;
@@ -28,34 +11,27 @@ export const Player: React.FC<{
   onTempoChange(value: number): void;
   setActiveNote(index: number): void;
 }> = ({ notes, tempo, name, onTempoChange, setActiveNote }) => {
-  const audio = React.useMemo(() => (notes.length ? createAudio(notes, tempo, setActiveNote) : null), [
-    notes,
-    tempo,
-    setActiveNote,
-  ]);
+  const audio = React.useMemo(
+    () => (notes.length ? createAudio(notes, tempo, setActiveNote) : null),
+    [notes, tempo, setActiveNote],
+  );
 
   React.useEffect(() => {
     return () => {
-      if (audio) {
-        audio.stop();
-      }
+      audio?.stop();
     };
   }, [audio]);
 
   const onPlay = () => {
     if (audio) {
-      try {
-        ToneLib.start();
-      } catch {}
+      void start().catch(() => undefined);
       audio.stop();
       audio.start();
     }
   };
 
   const onStop = () => {
-    if (audio) {
-      audio.stop();
-    }
+    audio?.stop();
   };
 
   const onDownload = () => {
@@ -63,12 +39,11 @@ export const Player: React.FC<{
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTempo = parseInt(e.target.value, 10) || 100;
-    onTempoChange(newTempo);
+    onTempoChange(parseInt(e.target.value, 10) || 100);
   };
 
   return (
-    <div className={mainStyle}>
+    <div className="flex px-1 pt-2 text-xl leading-6">
       <button type="button" onClick={onPlay}>
         Play
       </button>
@@ -78,9 +53,9 @@ export const Player: React.FC<{
       <button type="button" onClick={onDownload}>
         Download
       </button>
-      <div className={separatorStyle} />
+      <div className="flex-1" />
       Tempo:
-      <input className={tempoInputStyle} type="number" value={tempo} onChange={onChange} />
+      <input className="w-[50px]" type="number" value={tempo} onChange={onChange} />
     </div>
   );
 };

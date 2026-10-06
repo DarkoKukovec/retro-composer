@@ -6,8 +6,8 @@ export function parseNotes(notes: string): Array<INoteRecord> {
   return notes
     .split(/\s+/g)
     .map((note) => note.match(NOTE_REGEX))
-    .filter((note) => note !== null)
-    .map(([_match, duration, extendedLength, sharp, tone, octave, pauseDuration, extendedPauseLength, rest]: any) =>
+    .filter((note): note is RegExpMatchArray => note !== null)
+    .map(([, duration, extendedLength, sharp, tone, octave, pauseDuration, extendedPauseLength, rest]) =>
       duration
         ? {
             duration: parseInt(duration, 10),

@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #2b303d;
+}
+
+#root {
+  height: 100%;
+  font-family: Quicksand, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #d9eff9;
+}
+
+button {
+  appearance: none;
+  border: 1px solid #242d23;
+  background: transparent;
+  font-family: VT323, monospace;
+  font-size: 20px;
+  margin: 0 4px;
+  outline: none;
+  color: #242d23;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #242d23;
+  color: #79a682;
+}
+
+input,
+[contenteditable] {
+  border: none;
+  background: transparent;
+  font-family: VT323, monospace;
+  font-size: 20px;
+  color: #242d23;
+  outline: none;
+}
+
+/* Keypad buttons keep a metallic gradient instead of the global button style */
+#keyboard button {
+  background: linear-gradient(#f0f2e8, #787b7c);
+  color: #000;
+  border-radius: 8px;
+  font-size: 28px;
+  font-family: Quicksand, sans-serif;
+}
+
+#keyboard button:hover {
+  background: linear-gradient(#c0c2c8, #787b7c);
+  color: #000;
+}
+
+#keyboard button:active {
+  background: linear-gradient(#787b7c, #f0f2e8);
+  color: #000;
+}

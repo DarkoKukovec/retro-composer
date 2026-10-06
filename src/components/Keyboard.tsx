@@ -1,7 +1,5 @@
-/* eslint-disable react/jsx-no-bind */
-import { css } from 'emotion';
 import * as React from 'react';
-import { SECONDARY_COLOR } from '../consts/colors';
+
 import { INoteRecord } from '../interfaces/INoteRecord';
 import { serializeNotes } from '../services/inputParser';
 
@@ -9,36 +7,6 @@ const DURATIONS = [32, 16, 8, 4, 2, 1];
 const DEFAULT_DURATION = 8;
 const DEFAULT_OCTAVE = 2;
 const TONES = { 1: 'c', 2: 'd', 3: 'e', 4: 'f', 5: 'g', 6: 'a', 7: 'b' };
-
-const mainStyle = css`
-  width: 100%;
-  height: 230px;
-  background: ${SECONDARY_COLOR};
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 8px;
-  padding: 8px 0;
-
-  button {
-    background: linear-gradient(#f0f2e8, #787b7c);
-    color: #000;
-    border-radius: 8px;
-    font-size: 28px;
-    font-family: Quicksand, sans-serif;
-
-    &:hover {
-      background: linear-gradient(#c0c2c8, #787b7c);
-      color: #000;
-    }
-
-    &:active {
-      background: linear-gradient(#787b7c, #f0f2e8);
-      color: #000;
-    }
-  }
-`;
-
 enum Key {
   Zero,
   One,
@@ -57,33 +25,35 @@ enum Key {
   C,
 }
 
-const Button: React.FC<{ keyVal: Key; children: any; onPress(key: Key, long: boolean): void }> = ({
+const Button: React.FC<{ keyVal: Key; children: React.ReactNode; onPress(key: Key, long: boolean): void }> = ({
   keyVal,
   children,
   onPress,
 }) => {
-  const [timer, setTimer] = React.useState();
+  const timer = React.useRef<number | undefined>(undefined);
 
   const onMouseUp = () => {
-    if (timer) {
-      clearTimeout(timer);
-      setTimer(null);
+    if (timer.current !== undefined) {
+      clearTimeout(timer.current);
+      timer.current = undefined;
       onPress(keyVal, false);
     }
   };
 
   const onMouseOut = () => {
-    clearTimeout(timer);
-    setTimer(null);
+    if (timer.current !== undefined) {
+      clearTimeout(timer.current);
+      timer.current = undefined;
+    }
   };
 
   const onLongPress = () => {
     onPress(keyVal, true);
-    setTimer(null);
+    timer.current = undefined;
   };
 
   const onMouseDown = () => {
-    setTimer(setTimeout(onLongPress, 400));
+    timer.current = setTimeout(onLongPress, 400);
   };
 
   return (
@@ -100,10 +70,10 @@ const Button: React.FC<{ keyVal: Key; children: any; onPress(key: Key, long: boo
   );
 };
 
-const KEYS = { '*': Key.Star, '#': Key.Hash };
-
-let presses: Array<Key> = [];
-let timer: number | null = null;
+const KEYS = {
+  '*': Key.Star,
+  '#': Key.Hash,
+};
 
 export const Keyboard: React.FC<{
   notes: Array<INoteRecord>;
@@ -111,25 +81,18 @@ export const Keyboard: React.FC<{
   setActiveNote(index: number): void;
   onNotesChange(notes: string): void;
 }> = ({ notes, activeIndex, setActiveNote, onNotesChange }) => {
-  if (presses.length) {
-    if (timer) {
-      clearTimeout(timer);
-      timer = null;
-    }
-    timer = (setTimeout(() => {
-      onKeyPress(presses.shift() as Key, false);
-    }, 100) as unknown) as number;
-  }
+  const presses = React.useRef<Array<Key>>([]);
+  const keyTimer = React.useRef<number | undefined>(undefined);
+
   const onKeyPress = (key: Key, long: boolean) => {
     if (navigator && navigator.vibrate) {
       navigator.vibrate(50);
     }
     if (key === Key.Star && long) {
-      presses =
+      presses.current =
         prompt()
           ?.split(' ')
-          .map((k: string) => ((KEYS as any)[k] as Key) || (parseInt(k, 10) as Key)) || [];
-      onKeyPress(presses.shift() as Key, false);
+          .map((k: string) => KEYS[k as keyof typeof KEYS] ?? (parseInt(k, 10) as Key)) ?? [];
       return;
     }
     const activeNote = notes[activeIndex];
@@ -215,8 +178,24 @@ export const Keyboard: React.FC<{
     }
   };
 
+  // Star long-press keys are queued in presses; each note is drained 100 ms
+  // after the last render so it sees the notes state updated by the previous
+  // one. Runs on every render, mirroring the pre-migration render-phase timer.
+  React.useEffect(() => {
+    if (presses.current.length === 0) {
+      return;
+    }
+    clearTimeout(keyTimer.current);
+    keyTimer.current = setTimeout(() => {
+      const k = presses.current.shift();
+      if (k !== undefined) {
+        onKeyPress(k, false);
+      }
+    }, 100);
+  });
+
   return (
-    <div className={mainStyle}>
+    <div id="keyboard" className="grid h-[230px] w-full grid-cols-3 gap-2 bg-[#2B303D] py-2 z-[1]">
       <Button keyVal={Key.Left} onPress={onKeyPress}>
         ←
       </Button>

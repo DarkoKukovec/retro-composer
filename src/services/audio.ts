@@ -1,8 +1,8 @@
-import { NoteLength } from '../enums/NoteLength';
-import { INoteRecord } from '../interfaces/INoteRecord';
+import { type TimeClass, getContext, Part, Synth, Time, Transport } from 'tone';
 import { saveAs } from 'file-saver';
 
-const Tone = require('tone');
+import { NoteLength } from '../enums/NoteLength';
+import { INoteRecord } from '../interfaces/INoteRecord';
 
 const types = [
   { mime: 'audio/ogg;codecs=opus', ext: 'ogg' },
@@ -11,7 +11,7 @@ const types = [
   { mime: 'audio/webm;codecs=vorbis', ext: 'webm' },
 ];
 
-let lastSequence: any;
+let lastSequence: Part | null = null;
 
 function generateAudio(
   notes: Array<INoteRecord>,
@@ -19,32 +19,29 @@ function generateAudio(
   onNoteChange?: (index: number) => void,
   onEnd?: () => void,
 ) {
-  Tone.Transport.bpm.value = tempo;
+  Transport.bpm.value = tempo;
   if (lastSequence) {
     lastSequence.stop();
   }
-  const synth = new Tone.Synth();
+  const synth = new Synth();
 
   let nextTone = 0;
 
-  const parts: Array<[number, [string, number, number]?]> = [];
-
+  const parts: Array<[number, [string, TimeClass, number]]> = [];
   notes.forEach((note, index) => {
-    const duration = Tone.Time(`${note.duration}n`);
+    const duration = Time(`${note.duration}n`);
     if ('tone' in note) {
       const tone = `${note.tone.toUpperCase()}${note.sharp ? '#' : ''}${2 + note.octave}`;
       parts.push([nextTone, [tone, duration, index]]);
     } else {
       parts.push([nextTone, ['', duration, index]]);
     }
-    nextTone += duration * (note.extendedLength ? 1.5 : 1);
+    nextTone += duration.toSeconds() * (note.extendedLength ? 1.5 : 1);
   });
 
-  const sequence = (lastSequence = new Tone.Part((time: number, [tone, duration, index]: [string, number, number]) => {
+  const sequence = (lastSequence = new Part((time: number, [tone, duration, index]: [string, TimeClass, number]) => {
     if (tone) {
-      synth.triggerAttackRelease(tone, duration, time);
-      // } else if (onEnd) {
-      //   onEnd();
+      synth.triggerAttackRelease(tone, duration.toSeconds(), time);
     }
     if (index === notes.length - 1 && onEnd) {
       onEnd();
@@ -64,7 +61,7 @@ export function createAudio(notes: Array<INoteRecord>, tempo: number, setActiveN
   const { synth, audio } = generateAudio(notes, tempo, setActiveNote);
 
   synth.toDestination();
-  Tone.Transport.start();
+  Transport.start();
 
   return audio;
 }
@@ -91,13 +88,11 @@ export function downloadAudio(
     }
     return;
   }
-  const context = Tone.context;
+  const context = getContext();
   const dest = context.createMediaStreamDestination();
-  // @ts-ignore
   const mediaRecorder = new MediaRecorder(dest.stream);
-  const type = types.find(
-    // @ts-ignore
-    (item) => (MediaRecorder && MediaRecorder.isTypeSupported ? MediaRecorder.isTypeSupported(item.mime) : true),
+  const type = types.find((item) =>
+    MediaRecorder && MediaRecorder.isTypeSupported ? MediaRecorder.isTypeSupported(item.mime) : true,
   );
 
   if (!type) {
@@ -117,24 +112,24 @@ export function downloadAudio(
       }
     },
     () => {
-      Tone.Transport.stop();
+      Transport.stop();
       mediaRecorder.stop();
     },
   );
 
   synth.toDestination();
   synth.connect(dest);
-  const chunks: Array<any> = [];
+  const chunks: Array<BlobPart> = [];
 
   mediaRecorder.onstop = () => {
-    var blob = new Blob(chunks, { type: type.mime });
+    const blob = new Blob(chunks, { type: type.mime });
     saveAs(blob, `${name || 'ringtone'}.${type.ext}`);
   };
 
-  mediaRecorder.ondataavailable = (evt: any) => {
+  mediaRecorder.ondataavailable = (evt: BlobEvent) => {
     chunks.push(evt.data);
   };
 
-  Tone.Transport.start();
+  Transport.start();
   audio.start();
 }
