@@ -1,6 +1,6 @@
 Retro composer is a single-page React app for composing chiptune songs on a keyboard. It is built with Vite, React 19, React Router 7, Tailwind CSS 4 and [Tone.js](https://tonejs.github.io/).
 
-Requires Node.js >= 24.
+Requires Node.js >= 26.
 
 ## Available Scripts
 
